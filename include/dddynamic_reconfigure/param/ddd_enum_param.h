@@ -114,14 +114,40 @@ namespace dddynamic_reconfigure {
                const string& def, const pair<map<string,pair<int,string> >,string>  &dictionary);
         #pragma clang diagnostic pop
 
+        /**
+         * @brief checks if the definition for an alias exists within the dictionary.
+         * @param name the string to search for within the dictionary
+         * @return true if the dictionary contains a definition for the given alias, false otherwise.
+         */
         bool hasDefinition(string name);
 
+        /**
+         * @brief fetches the definition for an alias within the dictionary.
+         * @param name the string to search for within the dictionary
+         * @return if the string exists within the dictionary, returns the int definition of the term given.
+         *         otherwise, returns the default value for the parameter.
+         */
         int getDefinition(string name);
 
+        /**
+         * @brief removes an alias for an integer within the dictionary, with the given name.
+         * @param name the string to remove from the dictionary, if it exists.
+         */
         void removeDefinition(string name);
 
+        /**
+         * @brief adds an alias for an integer to the dictionary, with the given name and definition.
+         * @param name the string to remove from the dictionary, if it exists.
+         * @param definition the value to which the given alias name will be assigned to.
+         */
         void addDefinition(string name, int definition);
 
+        /**
+         * @brief adds an alias for an integer to the dictionary, with the given name and definition.
+         * @param name the string to remove from the dictionary, if it exists.
+         * @param definition the value to which the given alias name will be assigned to.
+         * @param description additional description for the alias you are adding.
+         */
         void addDefinition(string name, int definition, string description);
 
     protected:

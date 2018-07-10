@@ -112,7 +112,11 @@ namespace dddynamic_reconfigure {
     }
 
     int DDDEnum::getDefinition(string name) {
-        return dict_.find(name)->second.first;
+        EnumMap::iterator it = dict_.find(name);
+        if(dict_.end() == it) {
+            return def_;
+        }
+        return it->second.first;
     }
 
     void DDDEnum::removeDefinition(string name) {
