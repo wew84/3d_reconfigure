@@ -47,14 +47,14 @@ if (CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
 
     ## DDDynamic tester
-    add_rostest_gtest(dddynamic_reconfigure-test test/dddynamic_reconfigure_inherited.test test/test_dddynamic_reconfigure_inherited.cpp)
+    add_rostest_gtest(dddynamic_reconfigure-test test/dddynamic_reconfigure.test test/test_dddynamic_reconfigure.cpp)
     target_link_libraries(dddynamic_reconfigure-test ${PROJECT_NAME})
 
     ## DDDParam tester
     foreach (param_type int double bool string enum)
         add_rostest_gtest(ddd_${param_type}-test test/ddd_param/ddd_${param_type}.test test/ddd_param/test_ddd_${param_type}.cpp)
         target_link_libraries(ddd_${param_type}-test ${PROJECT_NAME})
-    endforeach ()
+    endforeach()
 
     ## Full scale tester
     add_executable(ddd_server test/ddd_full_scale/ddd_server.cpp)
