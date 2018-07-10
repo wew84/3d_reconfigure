@@ -55,6 +55,12 @@ namespace dddynamic_reconfigure {
 
         void setValue(Value val);
 
+        void setDefault(Value val);
+
+        void setMin(Value val);
+
+        void setMax(Value val);
+
         /**
          * @brief creates a new int-enum param
          * @param name the name of the parameter
@@ -124,6 +130,15 @@ namespace dddynamic_reconfigure {
          * This method of storage allows integers to have multiple aliases.
          */
         EnumMap dict_;
+    private:
+
+        /**
+         * converts the value given to an integer according to the embedded dictionary.
+         * @param val the value to look up within the dictionary
+         * @return if the value is a string which exists in the dictionary, returns the int definition of the term given.
+         *         otherwise, returns the Value object defined conversion of the type to an integer.
+         */
+        int lookup(Value val);
     };
 }
 

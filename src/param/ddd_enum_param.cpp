@@ -34,10 +34,26 @@ namespace dddynamic_reconfigure {
     }
 
     void DDDEnum::setValue(Value val) {
+        val_ = lookup(val);
+    }
+
+    void DDDEnum::setDefault(Value val) {
+        def_ = lookup(val);
+    }
+
+    void DDDEnum::setMax(Value val) {
+        max_ = lookup(val);
+    }
+
+    void DDDEnum::setMin(Value val) {
+        min_ = lookup(val);
+    }
+
+    int DDDEnum::lookup(Value val) {
         if(val.getType() == "string" && dict_.find(val.toString()) != dict_.end()) {
-            val_ = dict_.find(val.toString())->second.first;
+            return dict_.find(val.toString())->second.first;
         } else {
-            val_ = val.toInt();
+            return val.toInt();
         }
     }
 

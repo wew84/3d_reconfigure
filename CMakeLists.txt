@@ -47,7 +47,7 @@ if (CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
 
     ## DDDynamic tester
-    add_rostest_gtest(dddynamic_reconfigure-test test/dddynamic_reconfigure.test test/test_dddynamic_reconfigure.cpp)
+    add_rostest_gtest(dddynamic_reconfigure-test test/dddynamic_reconfigure_inherited.test test/test_dddynamic_reconfigure_inherited.cpp)
     target_link_libraries(dddynamic_reconfigure-test ${PROJECT_NAME})
 
     ## DDDParam tester
