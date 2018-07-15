@@ -24,7 +24,7 @@ namespace dddynamic_reconfigure {
     };
 
     void DDDynamicReconfigure::add(DDParam *param) {
-        add(shared_ptr<DDParam>(param));
+        add(DDPtr(param));
     };
 
     void DDDynamicReconfigure::remove(DDPtr param) {
@@ -126,7 +126,7 @@ namespace dddynamic_reconfigure {
         if(map.find(name) != map.end() && (property == LEVEL || map[name]->sameType(value))) { // if the param with the given name exists,
                                                                                                // and either you are modifying the level,
                                                                                                // or its same same type as the member param.
-            if(shared_ptr<DDDParam> old = dynamic_pointer_cast<DDDParam>(map[name])) {
+            if(DDDPtr old = dynamic_pointer_cast<DDDParam>(map[name])) {
                 switch (property) {
                     default: {
                         ROS_WARN_STREAM("Asked to edit unknown property of parameter [" << name << "]. Ignored.");
@@ -166,7 +166,7 @@ namespace dddynamic_reconfigure {
     }
 
     bool DDDynamicReconfigure::manageMaxMin(Reconfigure& reconfigure, DDDynamicReconfigure::Property prop,
-                                            const shared_ptr<DDParam> &param) {
+                                            const DDPtr &param) {
         if(shared_ptr<DDDOrdered> ordered = dynamic_pointer_cast<DDDOrdered>(dynamic_pointer_cast<DDDParam>(param)->copy())) {
             switch (prop) {
                 default: { break; }
@@ -187,6 +187,22 @@ namespace dddynamic_reconfigure {
             }
         }
         return false;
+    }
+
+    DDDPtr DDDynamicReconfigure::at3(const char *name) {
+        return dddynamic_reconfigure::at3(params_,name);
+    }
+
+    DDDOrderedPtr DDDynamicReconfigure::at3o(const char *name) {
+        return dddynamic_reconfigure::at3o(params_,name);
+    }
+
+    DDDPtr at3(const DDMap& map, const char *name) {
+        if(DDDPtr ret = dynamic_pointer_cast<DDDParam>(at(map,name))) {return ret;} else {return DDDPtr();};
+    }
+
+    DDDOrderedPtr at3o(const DDMap& map, const char *name) {
+        if(DDDOrderedPtr ret = dynamic_pointer_cast<DDDOrdered>(at(map,name))) {return ret;} else {return DDDOrderedPtr();};
     }
 }
 #pragma clang diagnostic pop

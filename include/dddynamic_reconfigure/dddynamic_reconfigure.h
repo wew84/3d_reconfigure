@@ -18,12 +18,17 @@
 #include <boost/bind.hpp>
 
 #include "ddd_param.h"
+#include "ddd_ordered_param.h"
 #include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 using namespace std;
 using namespace boost;
 using namespace dynamic_reconfigure;
 using namespace ddynamic_reconfigure;
 namespace dddynamic_reconfigure {
+    // this is the pointer to any type of 3-Dynamic parameter.
+    typedef shared_ptr<DDDParam> DDDPtr;
+    // this is the pointer to any type of 3-Dynamic ordered parameter.
+    typedef shared_ptr<DDDOrdered> DDDOrderedPtr;
 
     /**
      * @brief The DDDynamicReconfigure class is the main class responsible for keeping track of parameters basic properties,
@@ -86,6 +91,22 @@ namespace dddynamic_reconfigure {
         void start();
 
         using DDynamicReconfigure::start; // allows use of all start methods provided in base class
+
+        /**
+         * @brief a tool people who use this API can use to find the param given within the param map,
+         *        and attempt to convert it to 3D-param if possible
+         * @param name the string to look for
+         * @return the param with the given name if it exists and can be casted to 3D-param type, nullptr otherwise
+         */
+        DDDPtr at3(const char* name);
+
+        /**
+         * @brief a tool people who use this API can use to find the param given within the param map,
+         *        and attempt to convert it to 3D-ordered if possible
+         * @param name the string to look for
+         * @return the param with the given name if it exists and can be casted to 3D-ordered type, nullptr otherwise
+         */
+        DDDOrderedPtr at3o(const char* name);
 
     protected:
 
@@ -154,7 +175,7 @@ namespace dddynamic_reconfigure {
          * @param param the param to look into
          * @return true if there was any change, false otherwise.
          */
-        bool manageMaxMin(Reconfigure &reconfigure, Property prop, const shared_ptr<DDParam> &param);
+        bool manageMaxMin(Reconfigure &reconfigure, Property prop, const DDPtr &param);
 
         #pragma clang diagnostic push
         #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
@@ -167,5 +188,23 @@ namespace dddynamic_reconfigure {
         ros::ServiceServer lvl_service_, def_service_, max_service_, min_service_;
         #pragma clang diagnostic pop
     };
+
+    /**
+     * @brief a tool people who use this API can use to find the param given within the param map,
+     *        and attempt to convert it to 3D-param if possible
+     * @param name the string to look for
+     * @param map the map to search
+     * @return the param with the given name if it exists and can be casted to 3D-param type, nullptr otherwise
+     */
+    DDDPtr at3(const DDMap& map, const char* name);
+
+    /**
+     * @brief a tool people who use this API can use to find the param given within the param map,
+     *        and attempt to convert it to 3D-ordered if possible
+     * @param name the string to look for
+     * @param map the map to search
+     * @return the param with the given name if it exists and can be casted to 3D-ordered type, nullptr otherwise
+     */
+    DDDOrderedPtr at3o(const DDMap& map, const char* name);
 }
 #endif //DDDYNAMIC_RECONFIGURE_DDDYNAMIC_RECONFIGURE_H
