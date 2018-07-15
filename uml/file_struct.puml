@@ -1,0 +1,62 @@
+@startuml
+package ddynamic_reconfigure as 2d #lightblue {
+    component DDynamicReconfigure #white
+    component DDValue #white
+    component DDParam #white
+    component DDInt #white
+    component DDDouble #white
+    component DDBool #white
+    component DDString #white
+
+    DDynamicReconfigure -[hidden]-> DDValue
+    DDValue -[hidden]-> DDParam
+    DDParam -[hidden]-> DDString
+    DDString -[hidden]-> DDBool
+    DDBool -[hidden]-> DDInt
+    DDInt -[hidden]-> DDDouble
+}
+package dddynamic_reconfigure as 3d {
+    file dddynamic_reconfigure as 3d_file {
+        component at3 #Yellow
+        component at3o #Yellow
+        component DDDynamicReconfigure
+
+        DDDynamicReconfigure .u.> at3
+        DDDynamicReconfigure .u.> at3o
+    }
+    interface DDDParam
+    interface DDDOrdered
+    DDDOrdered -> DDDParam
+    folder param {
+        component DDDInt as int
+        component DDDDouble as double
+        component DDDBool as bool
+        component DDDString as string
+        component DDDEnum as enum
+        file ddd_all_params as all
+
+        int -u-> DDDOrdered
+        double -u-> DDDOrdered
+        bool -u-> DDDParam
+        string -u-> DDDParam
+        enum -u-> int
+        all -u-> int
+        all -u--> double
+        all -u--> bool
+        all -u--> string
+        all -u-> enum
+        
+        int -> DDInt
+        double -> DDDouble
+        bool -> DDBool
+        string -> DDString
+    }
+    DDDynamicReconfigure --> DDDOrdered
+    DDDynamicReconfigure -u-> DDynamicReconfigure
+    DDDParam -> DDValue
+    DDDParam -> DDParam
+}
+component "dddynamic\nserver" as server
+server -> all
+server -> 3d_file
+@enduml

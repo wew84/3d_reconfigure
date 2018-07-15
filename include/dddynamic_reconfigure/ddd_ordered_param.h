@@ -5,7 +5,6 @@
 #ifndef DDDYNAMIC_RECONFIGURE_DDD_ORDERED_PARAM_H
 #define DDDYNAMIC_RECONFIGURE_DDD_ORDERED_PARAM_H
 
-#include <ddynamic_reconfigure/dd_value.h>
 #include <dddynamic_reconfigure/ddd_param.h>
 
 using namespace ddynamic_reconfigure;

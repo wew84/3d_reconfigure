@@ -1,0 +1,122 @@
+@startuml
+skinparam class {
+    BorderColor<<2D>> gray
+    BackgroundColor<<2D>> gainsboro
+}
+hide <<2D>> stereotype
+class DDValue <<2D>> {
+    ...
+    __
+    ...
+}
+interface DDParam <<2D>> {
+    ...
+    __
+    ...
+}
+class DDInt <<2D>> {
+    ...
+    __
+    ...
+}
+class DDDouble <<2D>> {
+    ...
+    __
+    ...
+}
+class DDBool <<2D>> {
+    ...
+    __
+    ...
+}
+class DDString <<2D>> {
+    ...
+    __
+    ...
+}
+class DDynamicReconfigure <<2D>> {
+    ...
+    __
+    ...
+}
+class DDDynamicReconfigure {
+    #started_ : bool
+    #Property : enum
+    -lvl_service_ : ServiceServer
+    -def_service_ : ServiceServer
+    -max_service_ : ServiceServer
+    -min_service_ : ServiceServer
+    __
+    +at3() : Value
+    +at3o() : DDDPtr
+    ..internal..
+    #{static} internalPropCallback() : bool
+    -reassign() : bool
+    -update() : void
+    -manageMaxMin() : void
+}
+note top: DDDPtr := shared_ptr<DDDParam>\nDDDOrderedPtr := shared_ptr<DDDOrdered>
+package ddd_param <<Rectangle>> {
+    interface DDDParam {
+        __
+        +getDefault() : DDValue
+        ..setters..
+        +setDefault() : void
+        +setLevel() : void
+        ..testers..
+        +isOrdered() : bool
+        ..other..
+        +copy() : DDPtr
+    }
+    interface DDDOrdered {
+        __
+        +getMin() : DDValue
+        +getMax() : DDValue
+        ..setters..
+        +setMin() : void
+        +setMax() : void
+        ..testers..
+        +outOfMin() : bool
+        +outOfMax() : bool
+    }
+    class DDDInt {
+    }
+    class DDDDouble {
+    }
+    class DDDBool {
+    }
+    class DDDString {
+    }
+    class DDDEnum {
+        #dict_ : map<string,pair<int,string> >
+        +getDefinition() : int
+        +hasDefinition() : bool
+        +addDefinition() : void
+        +removeDefinition() : void
+        -lookup() : int
+    }
+}
+DDDynamicReconfigure -[hidden]-> ddd_param
+
+DDParam .[#gray]> DDValue
+DDDParam -[#gray]|> DDParam
+DDDParam .[#gray]> DDValue
+DDDOrdered .[#gray]> DDValue
+DDDInt -[#gray]|> DDInt
+DDDDouble -[#gray]|> DDDouble
+DDDBool -[#gray]-|> DDBool
+DDDString -[#gray]-|> DDString
+DDynamicReconfigure "0..*" --[#gray]-o DDParam
+DDDynamicReconfigure -[#gray]|> DDynamicReconfigure
+DDInt .[#gray]u.|> DDParam
+DDDouble .[#gray]u.|> DDParam
+DDBool .[#gray]u.|> DDParam
+DDString .[#gray]u.|> DDParam
+
+DDDOrdered -|> DDDParam
+DDDInt .u.|> DDDOrdered
+DDDDouble .u.|> DDDOrdered
+DDDBool .u.|> DDDParam
+DDDString .u.|> DDDParam
+DDDEnum -u-|> DDDInt
+@enduml

@@ -17,7 +17,6 @@
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
-#include "ddd_param.h"
 #include "ddd_ordered_param.h"
 #include <ddynamic_reconfigure/ddynamic_reconfigure.h>
 using namespace std;
@@ -111,13 +110,6 @@ namespace dddynamic_reconfigure {
     protected:
 
         /**
-         * @brief whether or not the start() method was called.
-         */
-        bool started_;
-
-    private:
-
-        /**
          * @brief the enum holding all basic property types 3D-reconfigure allows to change.
          */
         enum Property {
@@ -136,7 +128,15 @@ namespace dddynamic_reconfigure {
          * @param prop the property to change.
          * @return -------(ROS)
          */
-        static bool internalCallback(DDDynamicReconfigure *obj, Reconfigure::Request &req, Reconfigure::Response &rsp, Property prop);
+        static bool internalPropCallback(DDDynamicReconfigure *obj, Reconfigure::Request &req,
+                                         Reconfigure::Response &rsp, Property prop);
+
+        /**
+         * @brief whether or not the start() method was called.
+         */
+        bool started_;
+
+    private:
 
         /**
          * @brief reassigns a value to the internal map assuming it is registered.

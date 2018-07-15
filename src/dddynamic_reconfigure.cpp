@@ -47,26 +47,26 @@ namespace dddynamic_reconfigure {
         DDynamicReconfigure::start();
 
         function<bool(Reconfigure::Request& req, Reconfigure::Response& rsp)> def_callback =
-                bind(&internalCallback,this,_1,_2,DEFAULT);
+                bind(&internalPropCallback,this,_1,_2,DEFAULT);
         def_service_ = nh_.advertiseService("set_parameter_defaults", def_callback); // this allows changes to the parameter defaults
 
         function<bool(Reconfigure::Request& req, Reconfigure::Response& rsp)> lvl_callback =
-                bind(&internalCallback,this,_1,_2,LEVEL);
+                bind(&internalPropCallback,this,_1,_2,LEVEL);
         lvl_service_ = nh_.advertiseService("set_parameter_levels", lvl_callback); // this allows changes to the parameter levels
 
         function<bool(Reconfigure::Request& req, Reconfigure::Response& rsp)> max_callback =
-                bind(&internalCallback,this,_1,_2,MAX);
+                bind(&internalPropCallback,this,_1,_2,MAX);
         max_service_ = nh_.advertiseService("set_parameter_maximums", max_callback); // this allows changes to the parameter maximums
 
         function<bool(Reconfigure::Request& req, Reconfigure::Response& rsp)> min_callback =
-                bind(&internalCallback,this,_1,_2,MIN);
+                bind(&internalPropCallback,this,_1,_2,MIN);
         min_service_ = nh_.advertiseService("set_parameter_minimums", min_callback); // this allows changes to the parameter minimums
 
         started_ = true;
     }
 
-    bool DDDynamicReconfigure::internalCallback(DDDynamicReconfigure *obj, Reconfigure::Request& req,
-            Reconfigure::Response& rsp, Property prop) {
+    bool DDDynamicReconfigure::internalPropCallback(DDDynamicReconfigure *obj, Reconfigure::Request &req,
+                                                    Reconfigure::Response &rsp, Property prop) {
         // debug msg
         string prop_name;
         switch(prop) {

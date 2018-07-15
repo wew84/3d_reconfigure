@@ -9,7 +9,6 @@
 #include <dynamic_reconfigure/Group.h>
 #include <dynamic_reconfigure/Config.h>
 #include <dynamic_reconfigure/ConfigDescription.h>
-#include <ddynamic_reconfigure/dd_value.h>
 #include <ddynamic_reconfigure/dd_param.h>
 
 using namespace dynamic_reconfigure;

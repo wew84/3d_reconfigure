@@ -1,0 +1,48 @@
+@startuml
+component DDynamicReconfigure as ddr {
+    rectangle update_pub_ <<Publisher>> as uppub
+    rectangle desc_pub_ <<Publisher>> as descpub
+    rectangle set_service_ <<ServiceServer>> as set
+    descpub -[hidden]->uppub
+    uppub -[hidden]->set
+    component DDDynamicReconfigure as 3d {
+        rectangle lvl_service_ <<ServiceServer>> as lvl
+        rectangle def_service_ <<ServiceServer>> as def
+        rectangle max_service_ <<ServiceServer>> as max
+        rectangle min_service_ <<ServiceServer>> as min
+        lvl -[hidden]->def
+        def -[hidden]->max
+        max -[hidden]->min
+    }
+    set -[hidden]-> 3d
+}
+component client {
+    cloud "/set_parameters" as pset
+    cloud "/set_parameter_levels" as plvl
+    cloud "/set_parameter_defaults" as pdef
+    cloud "/set_parameter_maximums" as pmax
+    cloud "/set_parameter_minimums" as pmin
+    pset -[hidden]->plvl
+    plvl -[hidden]->pdef
+    pdef -[hidden]->pmax
+    pmax -[hidden]->pmin
+}
+component dynamic_reconfigure\ncommandline {
+    cloud "/parameter_descriptions" as pdesc
+    cloud "/parameter_updates" as pup
+    pdesc -[hidden]->pup
+}
+
+uppub -> pup
+descpub -> pdesc
+set -> pset
+pset -l-> set
+lvl -> plvl
+plvl -l-> lvl
+def -> pdef
+pdef -l-> def
+max -> pmax
+pmax -l-> max
+min -> pmin
+pmin -l-> min
+@enduml

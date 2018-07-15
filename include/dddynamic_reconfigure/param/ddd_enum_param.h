@@ -6,7 +6,6 @@
 #define DDDYNAMIC_RECONFIGURE_DDD_ENUM_PARAM_H
 
 #include "ddd_int_param.h"
-#include <ddynamic_reconfigure/param/dd_enum_param.h>
 #include <boost/foreach.hpp>
 
 namespace dddynamic_reconfigure {
