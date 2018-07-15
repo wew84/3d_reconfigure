@@ -34,7 +34,7 @@ bool paramService(TutorialParams::Request& req, TutorialParams::Response& res, D
     return true;
 }
 
-void callback(const DDMap& map, int) {
+void callback(const DDDMap& map, int) {
     ROS_INFO("Reconfigure Request: %d %f %s %s %ld",
             get(map, "int_param").toInt(),
             get(map, "double_param").toDouble(),
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
         dict["Large"] = 2;
         dict["ExtraLarge"] = 3;
     ddd.add(new DDDEnum("enum_param", 0, "A size parameter which is edited via an enum", 1, dict));
-    ddd.start(callback);
+    ddd.start(DDDFunc(callback));
 
     // Actual Server Node code
     ROS_INFO("Spinning node");

@@ -23,18 +23,6 @@ namespace dddynamic_reconfigure {
         }
     };
 
-    void DDDynamicReconfigure::add(DDParam *param) {
-        add(DDPtr(param));
-    };
-
-    void DDDynamicReconfigure::remove(DDPtr param) {
-        remove(param->getName());
-    };
-
-    void DDDynamicReconfigure::remove(DDParam *param) {
-        remove(param->getName());
-    };
-
     void DDDynamicReconfigure::remove(string param_name) {
         params_.erase(param_name);
         if(started_) {

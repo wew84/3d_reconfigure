@@ -29,17 +29,22 @@ namespace dddynamic_reconfigure {
     // this is the pointer to any type of 3-Dynamic ordered parameter.
     typedef shared_ptr<DDDOrdered> DDDOrderedPtr;
 
+    typedef DDMap DDDMap;
+    typedef DDFunc DDDFunc;
+
     /**
      * @brief The DDDynamicReconfigure class is the main class responsible for keeping track of parameters basic properties,
      *        values, descriptions, etc.
      *
-     *        It is also responsible of handling callbacks, config change requests, description setup and config setup,
-     *        and the ROS publishers and services.
+     *        It is also responsible of config change requests, description setup and config setup,
+     *        dynamic changes of the parameters' properties, and the ROS services.
+     *
+     *        Some things are left to be handled by the parent class, the DDynamicReconfigure class.
      *
      *        To operate a DDDynamic instance, you must go through the following procedure:
      *
      *        1. Construct a DDDynamicReconfigure instance with proper handling.
-     *        2. Add parameters to the instance as needed with any of the "add" methods.
+     *        2. Add parameters to the instance as needed with any of the "add" methods (and remove any you don't need with ``remove``).
      *        3. Start the ROS services with any of the "start" methods.
      *        4. If you need to change the callback after startup you may do so using "setCallback".
      *        5. When you need to get any of the stored parameters, call either "get" or "at" on this instance,
@@ -60,23 +65,9 @@ namespace dddynamic_reconfigure {
          */
         void add(DDPtr param);
 
-        /**
-         * @brief adds a parameter to the list, allowing it to be generated.
-         * @param param the pointer to the 2d-param to add to the list.
-         */
-        void add(DDParam *param);
+        using DDynamicReconfigure::add;
 
-        /**
-         * @brief adds a parameter to the list, allowing it to be generated.
-         * @param param the pointer to the 2d-param to remove from the list.
-         */
-        void remove(DDPtr param);
-
-        /**
-         * @brief adds a parameter to the list, allowing it to be generated.
-         * @param param the pointer to the 2d-param to remove from the list.
-         */
-        void remove(DDParam *param);
+        using DDynamicReconfigure::remove;
 
         /**
          * @brief adds a parameter to the list, allowing it to be generated.

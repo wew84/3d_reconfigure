@@ -11,6 +11,10 @@ using namespace ddynamic_reconfigure;
 using namespace std;
 namespace dddynamic_reconfigure {
 
+    /**
+     * @brief this class extends the base class with additional features regarding order.
+     *        In general, all parameters that fit the order axiom should implement this class.
+     */
     class DDDOrdered : public DDDParam {
     public:
 

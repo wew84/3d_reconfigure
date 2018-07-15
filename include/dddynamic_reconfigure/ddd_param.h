@@ -16,24 +16,28 @@ using namespace ddynamic_reconfigure;
 using namespace std;
 namespace dddynamic_reconfigure {
     /**
-     * @brief The DDParam class is the abstraction of all parameter types, and is the template for creating them.
+     * @brief The DDDParam interface is the abstraction of all dynamic parameter types, and is the template for creating them.
+     *        This class extends the DDParam interface in a generic, dynamic manner.
      *        At this point, not much is known about the parameter, but the following:
      *
      *        - the parameter has a name
-     *        - the parameter has a severity level
+     *        - the parameter has a severity level, which can be queried and changed.
      *        - the parameter has a description
      *        - the parameter contains some value, though its type and contents are unknown.
+     *        - the parameter has a default value, which can be queried and changed.
      *
-     *        Other than storing data, the parameter also has specialised methods to interact with DDDynamicReconfigure in order to apply changes and send them.
+     *        Other than storing data, the parameter also has specialised methods to interact with DDynamicReconfigure in order to apply changes and send them.
      *        These methods should not be touched by the user.
      *
-     *        Since this class is abstract, the class has multiple implementations whicch are not directly exposed but are used,
+     *        Since this class is abstract, the class has multiple implementations which are not directly exposed but are used,
      *        so its worth checking out their descriptions.
      *
-     *        While this class is abstract, it does have one implemented thing, and that is its stream operator (`<<`) which can be freely used.
+     *         While this class is abstract, it does have two implemented things:
+     *         - the stream operator (`<<`).
+     *         - whether or not this value is ordered or not (by default no).
      *
-     *        While DDParam is abstract, all of its concrete implementations should follow this guideline:
-     *              DD<Type>(const string &name, unsigned int level, const string &description, <type> def, <extra-args>)
+     *        While DDDParam is abstract, all of its concrete implementations should follow this guideline:
+     *              DDD<Type>(const string &name, unsigned int level, const string &description, <type> def, <extra-args>)
      *        Where:
      *        - <Type> is the type name you are implementing
      *        - name is the reference name
@@ -77,7 +81,7 @@ namespace dddynamic_reconfigure {
          * @brief makes a copy of this param.
          * @return a pointer to a new param with the same properties as this one.
          */
-        virtual shared_ptr<DDParam> copy() = 0;
+        virtual DDPtr copy() = 0;
     };
 }
 #endif //DDDYNAMIC_RECONFIGURE_DDD_PARAM_H
