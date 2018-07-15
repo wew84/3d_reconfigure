@@ -23,6 +23,8 @@ namespace dddynamic_reconfigure {
 
         void setLevel(unsigned int lvl);
 
+        shared_ptr<DDParam> copy();
+
         /**
          * @brief creates a new dynamic bool param
          * @param name the name of the parameter

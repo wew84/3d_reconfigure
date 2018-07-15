@@ -41,4 +41,9 @@ namespace dddynamic_reconfigure {
     bool DDDDouble::outOfMax() const {
         return max_ < val_;
     }
+
+
+    shared_ptr<DDParam> DDDDouble::copy() {
+        return shared_ptr<DDParam>(new DDDDouble(*this));
+    }
 }

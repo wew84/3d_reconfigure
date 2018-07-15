@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 #include <dynamic_reconfigure/Reconfigure.h>
 #include <dddynamic_reconfigure/param/ddd_all_params.h>
+#include <ros/ros.h>
 #include <exception>
 using namespace std;
 namespace dddynamic_reconfigure {
@@ -570,6 +571,179 @@ namespace dddynamic_reconfigure {
 
         explicit_stream << "{" << ddd_bool << "," << ddd_double << "," << ddd_enum << "," << ddd_int << "," << ddd_string << "}";
         ASSERT_EQ(explicit_stream.str(),stream.str());
+    }
+
+    // at this point we are adding new tests rather than extending DDynamic's tests
+
+    void descriptionCallback(ConfigDescription conf, unsigned long *flag) {
+        *flag = conf.groups[0].parameters.size();
+    }
+
+    /**
+     * @brief tests that dddynamic handles changes to its param list properly after it started.
+     */
+    TEST(DDDynamicReconfigureTest, liveParamChangeTest) { // NOLINT(cert-err58-cpp,modernize-use-equals-delete)
+        ros::NodeHandle nh("~");
+
+        unsigned long flag = 0;
+        function<void(ConfigDescription)> callback(bind(&descriptionCallback, _1, &flag));
+        ros::Subscriber desc_sub = nh.subscribe<ConfigDescription>(nh.getNamespace() + "/parameter_descriptions", 10,
+                                                                   callback);
+
+        DDDynamicReconfigure ddd(nh); // gets our main class running
+        ddd.start();
+        ros::AsyncSpinner spinner(1);
+        spinner.start();
+
+        ddd.add(new DDDInt("int_param", 0, "An Integer parameter", 0, 50, 100));
+        ddd.add(new DDDDouble("double_param", 0, "A double parameter", .5, 0, 1));
+        ddd.add(new DDDString("str_param", 0, "A string parameter", "Hello World"));
+        ddd.add(new DDDBool("bool_param", 0, "A Boolean parameter", true));
+        map<string, int> dict; {
+            dict["Small"] = 0;
+            dict["Medium"] = 1;
+            dict["Large"] = 2;
+            dict["ExtraLarge"] = 3;
+        }
+        ddd.add(new DDDEnum("enum_param", 0, "A size parameter which is edited via an enum", 0, dict));
+
+        ros::Rate r(1000); r.sleep(); // this also doubles as a performance standard
+
+        ASSERT_EQ(5, flag);
+    }
+
+    /**
+     * @brief tests that a param change occurs if the max and min change in a way that the value is out of range.
+     */
+    TEST(DDDynamicReconfigureTest, outOfRangeTest) { // NOLINT(cert-err58-cpp,modernize-use-equals-delete)
+        ros::NodeHandle nh("~");
+        DDDynamicReconfigure ddd(nh); // gets our main class running
+        DDDInt ddd_int("int_param", 0, "An Integer parameter", 50, 0, 100);
+        DDDDouble ddd_double("double_param", 0, "A double parameter", .5, 0, 1);
+        ddd.add(new DDDInt(ddd_int)); // note that using the address operator causes a segmentation fault when destructing objects!
+        ddd.add(new DDDDouble(ddd_double));
+        map<string, int> dict; {
+            dict["Small"] = 0;
+            dict["Medium"] = 1;
+            dict["Large"] = 2;
+            dict["ExtraLarge"] = 3;
+        }
+        DDDEnum ddd_enum("enum_param", 0, "A size parameter which is edited via an enum", 0, dict);
+        ddd.add(new DDDEnum(ddd_enum));
+
+        ddd.start();
+        ros::AsyncSpinner spinner(1);
+        spinner.start();
+
+        dynamic_reconfigure::Reconfigure srv;
+
+        dynamic_reconfigure::IntParameter int_param;
+        int_param.name = "int_param";
+        int_param.value = 60;
+        srv.request.config.ints.push_back(int_param);
+
+        dynamic_reconfigure::DoubleParameter double_param;
+        double_param.name = "double_param";
+        double_param.value = 0.6;
+        srv.request.config.doubles.push_back(double_param);
+
+        dynamic_reconfigure::StrParameter enum_param;
+        enum_param.name = "enum_param";
+        enum_param.value = "ExtraLarge";
+        srv.request.config.strs.push_back(enum_param);
+
+        callService(nh,"/set_parameter_minimums",srv);
+
+        ASSERT_FALSE(ddd_int.outOfMin());
+        ASSERT_FALSE(ddd_double.outOfMin());
+        ASSERT_FALSE(ddd_enum.outOfMin());
+
+        dynamic_reconfigure::Reconfigure srv2;
+
+        int_param.name = "int_param";
+        int_param.value = 50;
+        srv2.request.config.ints.push_back(int_param);
+
+        double_param.name = "double_param";
+        double_param.value = 0.5;
+        srv2.request.config.doubles.push_back(double_param);
+
+        enum_param.name = "enum_param";
+        enum_param.value = "Small";
+        srv2.request.config.strs.push_back(enum_param);
+
+        callService(nh,"/set_parameter_minimums",srv2);
+
+        ASSERT_FALSE(ddd_int.outOfMax());
+        ASSERT_FALSE(ddd_double.outOfMax());
+        ASSERT_FALSE(ddd_enum.outOfMax());
+    }
+
+    void dynamicLevelCallback(const DDMap& map, int) {
+        ASSERT_EQ(1, at(map,"int_param")->getLevel());
+        ASSERT_EQ(1, at(map,"double_param")->getLevel());
+        ASSERT_EQ(1, at(map,"str_param")->getLevel());
+        ASSERT_EQ(1, at(map,"bool_param")->getLevel());
+        ASSERT_EQ(1, at(map,"enum_param")->getLevel());
+    }
+
+    /**
+     * @brief tests that levels can be dynamically altered.
+     */
+    TEST(DDDynamicReconfigureTest, dynamicLevelTest) { // NOLINT(cert-err58-cpp,modernize-use-equals-delete)
+        ros::NodeHandle nh("~");
+        DDDynamicReconfigure ddd(nh); // gets our main class running
+        DDDInt ddd_int("int_param", 0, "An Integer parameter", 0, 50, 100);
+        DDDDouble ddd_double("double_param", 0, "A double parameter", .5, 0, 1);
+        DDDString ddd_string("str_param", 0, "A string parameter", "Hello World");
+        DDDBool ddd_bool("bool_param", 0, "A Boolean parameter", true);
+        ddd.add(new DDDInt(ddd_int)); // note that using the address operator causes a segmentation fault when destructing objects!
+        ddd.add(new DDDDouble(ddd_double));
+        ddd.add(new DDDString(ddd_string));
+        ddd.add(new DDDBool(ddd_bool));
+        map<string, int> dict; {
+            dict["Small"] = 0;
+            dict["Medium"] = 1;
+            dict["Large"] = 2;
+            dict["ExtraLarge"] = 3;
+        }
+        DDDEnum ddd_enum("enum_param", 0, "A size parameter which is edited via an enum", 0, dict);
+        ddd.add(new DDDEnum(ddd_enum));
+        
+        ddd.start(&dynamicLevelCallback);
+        ros::AsyncSpinner spinner(1);
+        spinner.start();
+
+        dynamic_reconfigure::Reconfigure srv;
+
+        dynamic_reconfigure::IntParameter int_param;
+        int_param.name = "int_param";
+        int_param.value = 1;
+        srv.request.config.ints.push_back(int_param);
+
+        dynamic_reconfigure::IntParameter double_param;
+        double_param.name = "double_param";
+        double_param.value = 1;
+        srv.request.config.ints.push_back(double_param);
+
+        dynamic_reconfigure::IntParameter bool_param;
+        bool_param.name = "bool_param";
+        bool_param.value = 1;
+        srv.request.config.ints.push_back(bool_param);
+
+        dynamic_reconfigure::IntParameter string_param;
+        string_param.name = "str_param";
+        string_param.value = 1;
+        srv.request.config.ints.push_back(string_param);
+
+        dynamic_reconfigure::IntParameter enum_param;
+        enum_param.name = "enum_param";
+        enum_param.value = 1;
+        srv.request.config.ints.push_back(enum_param);
+
+        callService(nh,"/set_parameter_levels",srv);
+
+        callService(nh,"/set_parameters",dynamic_reconfigure::Reconfigure());
     }
 }
 

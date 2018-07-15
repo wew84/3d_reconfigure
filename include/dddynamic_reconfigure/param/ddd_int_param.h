@@ -37,6 +37,8 @@ namespace dddynamic_reconfigure {
 
         void setMax(Value val);
 
+        shared_ptr<DDParam> copy();
+
         /**
          * creates a new dynamic int param
          * @param name the name of the parameter
@@ -47,7 +49,7 @@ namespace dddynamic_reconfigure {
          * @param min the minimum allowed value. Defaults to INT32_MIN
          */
         inline DDDInt(const string &name, unsigned int level, const string &description,
-                int def, int max = INT32_MAX, int min = INT32_MIN) : DDInt(name,level,description,def,max,min) {}
+                int def, int min = INT32_MIN, int max = INT32_MAX) : DDInt(name,level,description,def, min, max) {}
     };
 }
 

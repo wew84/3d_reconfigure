@@ -41,4 +41,8 @@ namespace dddynamic_reconfigure {
     bool DDDInt::outOfMax() const {
         return max_ < val_;
     }
+
+    shared_ptr<DDParam> DDDInt::copy() {
+        return shared_ptr<DDParam>(new DDDInt(*this));
+    }
 }

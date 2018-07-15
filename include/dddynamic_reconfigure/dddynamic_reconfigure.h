@@ -136,14 +136,13 @@ namespace dddynamic_reconfigure {
          *        If you are changing max or min, this will also make sure to change values that are now beyond the limit,
          *        and calls the DDynamic internal callback accordingly.
          * @param req the ROS request holding info about the new map
-         * @param config the map to update
          * @param prop the enum assigned property:
          *        DEFAULT is the default property
          *        LEVEL is the level property
          *        MAX is the max property
          *        MIN is the min property
          */
-        void update(const Reconfigure::Request &req, DDMap &config, Property prop);
+        void update(const Reconfigure::Request &req, Property prop);
 
         /**
          * @brief edits a reconfigure msg to edit the param if needed.
@@ -155,7 +154,7 @@ namespace dddynamic_reconfigure {
          * @param param the param to look into
          * @return true if there was any change, false otherwise.
          */
-        bool manageMaxMin(Reconfigure reconfigure, Property prop, const shared_ptr<DDParam> &param);
+        bool manageMaxMin(Reconfigure &reconfigure, Property prop, const shared_ptr<DDParam> &param);
 
         #pragma clang diagnostic push
         #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"

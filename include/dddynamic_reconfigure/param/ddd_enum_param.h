@@ -61,6 +61,8 @@ namespace dddynamic_reconfigure {
 
         void setMax(Value val);
 
+        shared_ptr<DDParam> copy();
+
         /**
          * @brief creates a new int-enum param
          * @param name the name of the parameter

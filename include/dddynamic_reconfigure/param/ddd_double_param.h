@@ -37,6 +37,8 @@ namespace dddynamic_reconfigure {
 
         void setMax(Value val);
 
+        shared_ptr<DDParam> copy();
+
         /**
          * creates a new dynamic double param
          * @param name the name of the parameter
@@ -47,8 +49,8 @@ namespace dddynamic_reconfigure {
          * @param min the minimum allowed value. Defaults to -DBL_MAX
          */
         DDDDouble(const string &name, unsigned int level, const string &description, double def,
-                 double max = d_limit::infinity(), double min = -d_limit::infinity())
-                : DDDouble(name,level,description,def,max,min) {}
+                 double min = -d_limit::infinity(), double max = d_limit::infinity())
+                : DDDouble(name,level,description,def, min, max) {}
     };
 }
 

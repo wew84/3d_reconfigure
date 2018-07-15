@@ -65,7 +65,8 @@ namespace dddynamic_reconfigure {
         started_ = true;
     }
 
-    bool DDDynamicReconfigure::internalCallback(DDDynamicReconfigure *obj, Reconfigure::Request& req, Reconfigure::Response& rsp, Property prop) {
+    bool DDDynamicReconfigure::internalCallback(DDDynamicReconfigure *obj, Reconfigure::Request& req,
+            Reconfigure::Response& rsp, Property prop) {
         // debug msg
         string prop_name;
         switch(prop) {
@@ -78,39 +79,42 @@ namespace dddynamic_reconfigure {
         ROS_DEBUG_STREAM("Changing [" << prop_name << "] properties of some dddynamic parameters");
 
         // actual work
-        obj->update(req, obj->params_, prop);
+        obj->update(req, prop);
         obj->desc_pub_.publish(obj->makeDescription()); // updates the descriptor
         return true;
     }
 
-    void DDDynamicReconfigure::update(const Reconfigure::Request &req, DDMap &config, Property prop) {
+    void DDDynamicReconfigure::update(const Reconfigure::Request &req, Property prop) {
         // the ugly part of the code, since ROS does not provide a nice generic message. Oh well...
         Reconfigure max_min_reconfigure;
         bool reconfig_changed = false;
         BOOST_FOREACH(const IntParameter i,req.config.ints) {
-            if(!reassign(config, i.name, Value(i.value),prop)) {
+            if(!reassign(params_, i.name, Value(i.value),prop)) {
                 ROS_ERROR_STREAM("Variable [" << i.name << "] is not registered");
             }
-            reconfig_changed |= manageMaxMin(max_min_reconfigure,prop,config[i.name]);
+            reconfig_changed |= manageMaxMin(max_min_reconfigure,prop,params_[i.name]);
         }
         BOOST_FOREACH(const DoubleParameter i,req.config.doubles) {
-            if(!reassign(config, i.name, Value(i.value),prop)) {
+            if(!reassign(params_, i.name, Value(i.value),prop)) {
                 ROS_ERROR_STREAM("Variable [" << i.name << "] is not registered");
             }
-            reconfig_changed |= manageMaxMin(max_min_reconfigure,prop,config[i.name]);
+            reconfig_changed |= manageMaxMin(max_min_reconfigure,prop,params_[i.name]);
         }
         BOOST_FOREACH(const BoolParameter i,req.config.bools) {
-            if(!reassign(config, i.name, Value((bool)i.value),prop)) {
+            if(!reassign(params_, i.name, Value((bool)i.value),prop)) {
                 ROS_ERROR_STREAM("Variable [" << i.name << "] is not registered");
             }
+            reconfig_changed |= manageMaxMin(max_min_reconfigure,prop,params_[i.name]);
         }
         BOOST_FOREACH(const StrParameter i,req.config.strs) {
-            if(reassign(config, i.name, Value(i.value),prop)) {
+            if(!reassign(params_, i.name, Value(i.value),prop)) {
                 ROS_ERROR_STREAM("Variable [" << i.name << "] is not registered");
             }
+            reconfig_changed |= manageMaxMin(max_min_reconfigure,prop,params_[i.name]);
         }
         if(reconfig_changed) {
-            if(ros::service::call("set_parameters",max_min_reconfigure)) {
+            if(DDynamicReconfigure::internalCallback(dynamic_cast<DDynamicReconfigure*>(this),
+                    max_min_reconfigure.request,max_min_reconfigure.response)) {
                 ROS_INFO_STREAM("Some variables were found to be beyond their allowed ranges, changed accordingly.");
             } else {
                 ROS_ERROR_STREAM("Some variables were found to be beyond their allowed ranges, could not change them.");
@@ -119,7 +123,9 @@ namespace dddynamic_reconfigure {
     }
 
     bool DDDynamicReconfigure::reassign(DDMap &map, const string &name, const Value &value, Property property) {
-        if(map.find(name) != map.end() && map[name]->sameType(value)) {
+        if(map.find(name) != map.end() && (property == LEVEL || map[name]->sameType(value))) { // if the param with the given name exists,
+                                                                                               // and either you are modifying the level,
+                                                                                               // or its same same type as the member param.
             if(shared_ptr<DDDParam> old = dynamic_pointer_cast<DDDParam>(map[name])) {
                 switch (property) {
                     default: {
@@ -159,9 +165,9 @@ namespace dddynamic_reconfigure {
         }
     }
 
-    bool DDDynamicReconfigure::manageMaxMin(Reconfigure reconfigure, DDDynamicReconfigure::Property prop,
+    bool DDDynamicReconfigure::manageMaxMin(Reconfigure& reconfigure, DDDynamicReconfigure::Property prop,
                                             const shared_ptr<DDParam> &param) {
-        if(shared_ptr<DDDOrdered> ordered = dynamic_pointer_cast<DDDOrdered>(param)) {
+        if(shared_ptr<DDDOrdered> ordered = dynamic_pointer_cast<DDDOrdered>(dynamic_pointer_cast<DDDParam>(param)->copy())) {
             switch (prop) {
                 default: { break; }
                 case MAX: {

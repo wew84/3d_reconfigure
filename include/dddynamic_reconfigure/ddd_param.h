@@ -73,6 +73,12 @@ namespace dddynamic_reconfigure {
          * @return true is the object is ordered, false otherwise.
          */
         virtual bool isOrdered();
+
+        /**
+         * @brief makes a copy of this param.
+         * @return a pointer to a new param with the same properties as this one.
+         */
+        virtual shared_ptr<DDParam> copy() = 0;
     };
 }
 #endif //DDDYNAMIC_RECONFIGURE_DDD_PARAM_H

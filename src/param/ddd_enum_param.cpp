@@ -130,5 +130,9 @@ namespace dddynamic_reconfigure {
     void DDDEnum::addDefinition(string name, int definition, string description) {
         dict_[name] = pair<int,string>(definition,description);
     }
+
+    shared_ptr<DDParam> DDDEnum::copy() {
+        return shared_ptr<DDParam>(new DDDEnum(*this));
+    }
 }
 #pragma clang diagnostic pop

@@ -22,6 +22,8 @@ namespace dddynamic_reconfigure {
 
         void setLevel(unsigned int lvl);
 
+        shared_ptr<DDParam> copy();
+
         /**
          * creates a new dynamic string param
          * @param name the name of the parameter
