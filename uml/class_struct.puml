@@ -89,11 +89,14 @@ package ddd_param <<Rectangle>> {
     }
     class DDDEnum {
         #dict_ : map<string,pair<int,string> >
+        #enum_description_ : string
         +getDefinition() : int
         +hasDefinition() : bool
         +addDefinition() : void
         +removeDefinition() : void
         -lookup() : int
+        -makeEditMethod() : string
+        -makeConst() : string
     }
 }
 DDDynamicReconfigure -[hidden]-> ddd_param

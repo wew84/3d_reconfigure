@@ -37,7 +37,7 @@ namespace dddynamic_reconfigure {
 
         void setMax(Value val);
 
-        shared_ptr<DDParam> copy();
+        DDPtr copy();
 
         /**
          * creates a new dynamic int param

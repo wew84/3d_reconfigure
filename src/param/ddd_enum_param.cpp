@@ -21,6 +21,16 @@ map<string,pair<int,string> > fillGaps(map<string,int> old_map) {
 
 namespace dddynamic_reconfigure {
 
+    void DDDEnum::prepGroup(Group &group) {
+        ParamDescription desc;
+        desc.name  = name_;
+        desc.level = level_;
+        desc.description = desc_;
+        desc.type = "int";
+        desc.edit_method = makeEditMethod();
+        group.parameters.push_back(desc);
+    }
+
     bool DDDEnum::sameType(Value val) {
         return val.getType() == "int" || val.getType() == "string";
     }
@@ -93,6 +103,7 @@ namespace dddynamic_reconfigure {
             if(it->second.first > max_) {max_ = it->second.first;}
             if(it->second.first < min_) {min_ = it->second.first;}
         };
+        enum_description_ = dictionary.second;
     }
 
     DDDEnum::DDDEnum(const string &name, unsigned int level, const string &description, const string &def,
@@ -105,6 +116,43 @@ namespace dddynamic_reconfigure {
             if(it->second.first > max_) {max_ = it->second.first;}
             if(it->second.first < min_) {min_ = it->second.first;}
         };
+        enum_description_ = dictionary.second;
+    }
+
+    string DDDEnum::makeEditMethod() {
+        stringstream ret;
+        ret << "{";
+        {
+            ret << "'enum_description': '" << enum_description_ << "', ";
+            ret << "'enum': [";
+            {
+                EnumMap::const_iterator it = dict_.begin();
+                ret << makeConst(it->first, it->second.first, it->second.second);
+                for(it++; it != dict_.end(); it++) {
+                    ret << ", " << makeConst(it->first, it->second.first, it->second.second);
+                };
+            }
+            ret << "]";
+        }
+        ret << "}";
+        return ret.str();
+    }
+
+    string DDDEnum::makeConst(string name, int value, string desc) {
+        stringstream ret;
+        ret << "{";
+        {
+            ret << "'srcline': 0, "; // the sole reason this is here is because dynamic placed it in its enum JSON.
+            ret << "'description': '" << desc << "', ";
+            ret << "'srcfile': '/does/this/really/matter.cfg', "; // the answer is no. This is useless.
+            ret << "'cconsttype': 'const int', ";
+            ret << "'value': '" << value << "', ";
+            ret << "'ctype': 'int', ";
+            ret << "'type': 'int', ";
+            ret << "'name': '" << name << "'";
+        }
+        ret << "}";
+        return ret.str();
     }
 
     bool DDDEnum::hasDefinition(string name) {
@@ -131,8 +179,8 @@ namespace dddynamic_reconfigure {
         dict_[name] = pair<int,string>(definition,description);
     }
 
-    shared_ptr<DDParam> DDDEnum::copy() {
-        return shared_ptr<DDParam>(new DDDEnum(*this));
+    DDPtr DDDEnum::copy() {
+        return DDPtr(new DDDEnum(*this));
     }
 }
 #pragma clang diagnostic pop

@@ -18,7 +18,7 @@ namespace dddynamic_reconfigure {
         level_ = lvl;
     }
 
-    shared_ptr<DDParam> DDDBool::copy() {
-        return shared_ptr<DDParam>(new DDDBool(*this));
+    DDPtr DDDBool::copy() {
+        return DDPtr(new DDDBool(*this));
     }
 }

@@ -19,7 +19,7 @@ namespace dddynamic_reconfigure {
     }
 
 
-    shared_ptr<DDParam> DDDString::copy() {
-        return shared_ptr<DDParam>(new DDDString(*this));
+    DDPtr DDDString::copy() {
+        return DDPtr(new DDDString(*this));
     }
 }

@@ -42,7 +42,7 @@ namespace dddynamic_reconfigure {
         return max_ < val_;
     }
 
-    shared_ptr<DDParam> DDDInt::copy() {
+    DDPtr DDDInt::copy() {
         return shared_ptr<DDParam>(new DDDInt(*this));
     }
 }

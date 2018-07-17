@@ -43,7 +43,7 @@ namespace dddynamic_reconfigure {
     }
 
 
-    shared_ptr<DDParam> DDDDouble::copy() {
-        return shared_ptr<DDParam>(new DDDDouble(*this));
+    DDPtr DDDDouble::copy() {
+        return DDPtr(new DDDDouble(*this));
     }
 }

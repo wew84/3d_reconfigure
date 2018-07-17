@@ -48,6 +48,8 @@ namespace dddynamic_reconfigure {
     class DDDEnum : public DDDInt {
     public:
 
+        void prepGroup(Group &group);
+
         bool sameType(Value val);
 
         bool sameValue(Value val);
@@ -60,7 +62,7 @@ namespace dddynamic_reconfigure {
 
         void setMax(Value val);
 
-        shared_ptr<DDParam> copy();
+        DDPtr copy();
 
         /**
          * @brief creates a new int-enum param
@@ -157,6 +159,10 @@ namespace dddynamic_reconfigure {
          * This method of storage allows integers to have multiple aliases.
          */
         EnumMap dict_;
+        /**
+         * @brief this holds the physical enum's description. why is this here? because 1D-reconfigure.
+         */
+        string enum_description_;
     private:
 
         /**
@@ -166,6 +172,21 @@ namespace dddynamic_reconfigure {
          *         otherwise, returns the Value object defined conversion of the type to an integer.
          */
         int lookup(Value val);
+
+        /**
+         * generates the 'edit_method' sting for prepGroup().
+         * @return a string that should not be touched.
+         */
+        string makeEditMethod();
+
+        /**
+         * generates a 'const' sting for prepGroup().
+         * @param name the name of the constant
+         * @param value the value of the constant
+         * @param desc the description given to the constant.
+         * @return a string that should not be touched.
+         */
+        string makeConst(string name, int value, string desc);
     };
 }
 
