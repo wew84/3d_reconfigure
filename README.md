@@ -388,7 +388,7 @@ both ``at`` (and its variants) and ``get`` have alternate static versions which 
 
 #### Include Structure:
 
-![](http://www.plantuml.com/plantuml/png/5Smn3i8m44JHdbF01Rm558WgDucCFKaisKwqEojV7rDzwHTlCKQbjtfxb9wgPxZM-q5UzX7HEC9UUFZN3PhEJdI6T3OP6E-NFFEgc7ihkokaHIDKfYPRgLYDwedX-lCBUfxz0G00)
+![](http://www.plantuml.com/plantuml/png/5Smn3i8m44JHdbF01Rm558WgDucCFKaisKwqEojV7rDzwHTlCKQbjtfxb9wgPxZM-q5UzX7HEC9UUFZN3PhEJdI6T3OP6E-NFFEgc7ihkokaHIDKfYPRgLYDwedX-lCBUfxz0G00.png)
 
 To operate 3D-reconfigure, you will need to include 2 file types:
 
@@ -404,7 +404,7 @@ As a bonus, you also get four static class-less methods: ``get``, ``at``, ``at3`
 
 #### Class Structure:
 
-![](http://www.plantuml.com/plantuml/png/5Smn3i8m34RXdLF01U811iJKcrJ1CMsanAtityhrIQSdlU5R7DaGlTqULRb5aR1stu7JFqIMHzegzlY6Y_6X44NYezEGyNxHiwmcS__g5YRKiqECfaRSillgi62ay_8NqJBx1m00)
+![](http://www.plantuml.com/plantuml/png/5Smn3i8m34RXdLF01U811iJKcrJ1CMsanAtityhrIQSdlU5R7DaGlTqULRb5aR1stu7JFqIMHzegzlY6Y_6X44NYezEGyNxHiwmcS__g5YRKiqECfaRSillgi62ay_8NqJBx1m00.png)
 
 Like the API section shows, there are only 3 major classes: ``DDValue``,``DDDParam``,``DDDynamicReconfigure``.
 
@@ -430,7 +430,7 @@ since the base functions of DDDynamic (and DDynamic) should not be modified.
 
 ### ROS Design
 
-![](http://www.plantuml.com/plantuml/png/3OmxZiCm4CLwdo9x0KsH544gtyHGf5bRW3x6cpVGzQEA80lknWXwgzjVwQbwLaTzNEHj7n746Sx2oxzkYZGwjJEaqMJgVB_acG_eol_bTAYqQ5J8kWc67KPuOhYNRxlslFW3)
+![](http://www.plantuml.com/plantuml/png/3OmxZiCm4CLwdo9x0KsH544gtyHGf5bRW3x6cpVGzQEA80lknWXwgzjVwQbwLaTzNEHj7n746Sx2oxzkYZGwjJEaqMJgVB_acG_eol_bTAYqQ5J8kWc67KPuOhYNRxlslFW3.png)
 
 Unlike 1D-reconfigure and 2D-reconfigure, 3D-reconfigure is built on two publishers and 5 services:
 the publishers are inherited from the base 2D-reconfigure, and one service is closed off yb 2D-reconfigure, but the rest 3D-reconfigure makes:
